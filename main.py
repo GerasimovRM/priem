@@ -57,6 +57,7 @@ for table_tr in table_trs:
 
     table_tds[2].find_element_by_tag_name("a").click()
     time.sleep(2)
+
     driver.find_element_by_xpath("//a[@class='btn btn-info']").click()
 
 
