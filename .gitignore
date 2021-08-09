@@ -4,3 +4,4 @@ venv
 .idea
 geckodriver.log
 settings.py
+RESULT
