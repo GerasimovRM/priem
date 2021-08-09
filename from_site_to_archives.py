@@ -65,7 +65,7 @@ for student_fio in students_fio:
         driver.find_element_by_xpath("//a[@class='btn btn-info']").click()
     if student_count == 0:
         print(f"{student_fio} not found!")
-    elif student_count > 1:
+    elif student_count == 1:
         print(f"{student_fio} ok!")
     else:
         print(f"{student_fio} duplicated!")
