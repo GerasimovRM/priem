@@ -63,6 +63,12 @@ def zip_to_dir(zip_path):
         zip_ref.extractall(dst)
 
 
+if not os.path.exists("data"):
+    os.makedirs("data")
+
+if not os.path.exists("RESULT"):
+    os.makedirs("RESULT")
+
 zip_names = glob.glob(f"{ZIP_DIR}\\*.zip")
 for zip_name in filter(lambda x: x.endswith(").zip"), zip_names):
     os.remove(zip_name)
@@ -70,10 +76,6 @@ for zip_name in filter(lambda x: x.endswith(").zip"), zip_names):
 zip_names = glob.glob(f"{ZIP_DIR}\\*.zip")
 for zip_name in zip_names:
     zip_to_dir(zip_name)
-
-
-if not os.path.isdir("data"):
-    raise FileNotFoundError("Папка data в целевом пути не найдена")
 
 # pngs to jpgs and delete pngs
 for student_name in next(os.walk("data"))[1]:
@@ -122,9 +124,6 @@ for student_name in next(os.walk("data"))[1]:
         print(*not_taken_files, sep='\n')
         print("=" * 20)
     not_taken_files.clear()
-
-if not os.path.exists("RESULT"):
-    os.makedirs("RESULT")
 
 # copy from folders to result FOLDER
 results_files = glob.glob("data\\*\\RESULT_*.pdf")
