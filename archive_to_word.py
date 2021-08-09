@@ -7,6 +7,7 @@ import img2pdf
 import glob
 from PyPDF2 import PdfFileMerger
 from io import BytesIO
+import shutil
 
 
 def images_to_pdf_file(images_names, dst_dir_path, not_taken_files=None):
@@ -33,6 +34,9 @@ def join_pdf_files_from_dir(pdfs_dir_path, dst_dir_path=None):
 
 
 def join_pdf_files(pdf_files_paths, dst_dir_path, pdf_name, not_taken_files=None):
+    if not pdf_name.endswith(".pdf"):
+        pdf_name += ".pdf"
+
     merger = PdfFileMerger()
     for pdf in pdf_files_paths:
         try:
@@ -41,7 +45,7 @@ def join_pdf_files(pdf_files_paths, dst_dir_path, pdf_name, not_taken_files=None
             print(e)
             if not_taken_files:
                 not_taken_files.append(pdf)
-    merger.write(f"{dst_dir_path}\\{pdf_name}.pdf")
+    merger.write(f"{dst_dir_path}\\{pdf_name}")
     merger.close()
 
 
@@ -60,10 +64,14 @@ zip_names = glob.glob(f"{ZIP_DIR}\\*.zip")
 for zip_name in zip_names:
     zip_to_dir(zip_name)
 
+if not os.path.isdir("data"):
+    raise FileNotFoundError("Папка data в целевом пути не найдена")
+
+
 for student_name in next(os.walk("data"))[1]:
     not_taken_files = []
     for root, dirs, files in list(os.walk(f"data\\{student_name}"))[::-1]:
-        print(root, dirs, files)
+        # print(root, dirs, files)
         current_dir_name = root.split("\\")[-1]
         jpgs_in_current_dir = get_files_by_extension(files, ".jpg")
         pdfs_in_current_dir = get_files_by_extension(files, ".pdf")
@@ -78,12 +86,27 @@ for student_name in next(os.walk("data"))[1]:
                                                                                  pdfs_in_current_dir))) + pdfs_from_extension_dirs
         if pdfs_to_add_current_dir:
             join_pdf_files(pdfs_to_add_current_dir, root, current_dir_name + "_sub", not_taken_files)
+
+    result_files = []
+    result_files.extend(glob.glob(f"data\\{student_name}\\jpgs.pdf"))
+    result_files.extend(glob.glob(f"data\\{student_name}\\{student_name}_sub.pdf"))
+
+    join_pdf_files(result_files, root, f"RESULT_{student_name}")
+
     if not_taken_files:
         print("=" * 20)
         print(f"{student_name} not taken files:")
         print(*not_taken_files, sep='\n')
         print("=" * 20)
     not_taken_files.clear()
+
+if not os.path.exists("RESULT"):
+    os.makedirs("RESULT")
+
+results_files = glob.glob("data\\*\\RESULT_*.pdf")
+for result_file in results_files:
+    file_name = result_file.split("_", 1)
+    shutil.copy(result_file, "RESULT\\")
 
 
 
