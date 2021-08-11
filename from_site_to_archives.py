@@ -23,7 +23,7 @@ class FromCiteToArchive:
         login = config.get("main", "LOGIN")
         password = config.get("main", "PASSWORD")
 
-        zip_dir = os.getcwd() + "\\" + config.get("main", "ZIP_DIR")
+        zip_dir = config.get("main", "ZIP_DIR")
         if not os.path.isdir(zip_dir):
             os.mkdir(zip_dir)
 
