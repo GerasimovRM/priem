@@ -15,3 +15,4 @@ build
 *.jpeg
 *.png
 students.txt
+*.ini
