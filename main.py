@@ -7,3 +7,4 @@ with open("students.txt", encoding="utf-8") as students_file:
     for student_fio in map(str.strip, students_file.readlines()):
         parser.find_person_and_load_data(student_fio)
 parser.close()
+input("Нажмите для выхода любую клваишу")
