@@ -5,3 +5,12 @@ venv
 geckodriver.log
 settings.py
 RESULT
+temp
+dist
+build
+*.spec
+*.rar
+*.zip
+*.jpg
+*.jpeg
+*.png
