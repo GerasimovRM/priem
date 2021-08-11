@@ -98,4 +98,4 @@ class FromCiteToArchive:
     def close(self):
         self.searcher.close()
         time.sleep(10)
-        self.close()
+        self.downloader.close()
