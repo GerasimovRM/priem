@@ -1,6 +1,6 @@
 import PIL.Image
 
-from settings import WORK_DIR, DATA_DIR, ZIP_DIR
+from settings import DATA_DIR, ZIP_DIR
 import zipfile
 import os
 import img2pdf
