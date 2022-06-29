@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 import pickle
 
@@ -35,7 +36,8 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
     @staticmethod
     def put_student_request(fio: str, link: str):
         requests.put("http://127.0.0.1:5000/student", params={"fio": fio,
-                                                              "student_url": link})
+                                                              "student_url": link,
+                                                              "computer_name": os.environ["COMPUTERNAME"]})
 
     def open_link(self, item: QTableWidgetItem):
         item_column = item.column()
@@ -60,7 +62,7 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
     def receive_message(self, message):
         message = json.loads(message)
         print(f"client: receive message: {message}")
-        self.tableWidget.clear()
+        # self.tableWidget.clear()
         self.tableWidget.setRowCount(0)
         self.students_data = message["students"]
         for student in self.students_data:
@@ -74,7 +76,9 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
             self.tableWidget.setItem(row_position, 3, QTableWidgetItem(student["status"]))
             self.tableWidget.setItem(row_position, 4, QTableWidgetItem(student["time_send"]))
             self.tableWidget.setItem(row_position, 5, QTableWidgetItem(student["time_created"]))
-            self.tableWidget.setItem(row_position, 6, QTableWidgetItem(student["last_moderator"]))
+            computer_name = student["computer_name"] if student["computer_name"] else "Свободен"
+            self.tableWidget.setItem(row_position, 6, QTableWidgetItem(computer_name))
+            self.tableWidget.setItem(row_position, 7, QTableWidgetItem(student["last_moderator"]))
             if student["is_moderated"]:
                 self.set_color_to_row(row_position, PyQt5.QtCore.Qt.gray)
         self.config_size_table()

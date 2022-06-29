@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>758</width>
+    <width>890</width>
     <height>350</height>
    </rect>
   </property>
@@ -55,6 +55,11 @@
       </column>
       <column>
        <property name="text">
+        <string>Занят</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
         <string>Последний модератор</string>
        </property>
       </column>
@@ -67,7 +72,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>758</width>
+     <width>890</width>
      <height>21</height>
     </rect>
    </property>

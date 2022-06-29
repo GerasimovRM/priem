@@ -27,13 +27,15 @@ async def get_data():
 
 @app.put("/student")
 async def put_student(fio: str,
-                      student_url: str):
+                      student_url: str,
+                      computer_name: str):
     students = parser.notifications.students
     # TODO: убрать подходы из деревни
     print(parser.notifications)
     for i, item in enumerate(students):
         if item.fio == fio and item.student_url == student_url:
             students[i].is_moderated = True
+            students[i].computer_name = computer_name
     print(parser.notifications)
 
 

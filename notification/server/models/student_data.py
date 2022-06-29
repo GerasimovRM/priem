@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -12,6 +12,7 @@ class StudentNotification(BaseModel):
     time_created: str
     last_moderator: str
     is_moderated: bool
+    computer_name: Optional[str] = None
 
 
 class StudentNotificationData(BaseModel):
