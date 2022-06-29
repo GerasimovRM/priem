@@ -4,6 +4,7 @@ import os
 import time
 
 from selenium.webdriver import FirefoxProfile, Firefox
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
@@ -20,10 +21,10 @@ class FromCiteToArchive:
 
         config = ConfigParser()
         config.read(config_path)
-        login = config.get("main", "LOGIN")
-        password = config.get("main", "PASSWORD")
+        login = config.get("MAIN", "LOGIN")
+        password = config.get("MAIN", "PASSWORD")
 
-        zip_dir = config.get("main", "ZIP_DIR")
+        zip_dir = config.get("MAIN", "ZIP_DIR")
         if not os.path.isdir(zip_dir):
             os.mkdir(zip_dir)
 
@@ -50,22 +51,22 @@ class FromCiteToArchive:
         if self.is_auth:
             return True
         self.searcher.get(f"{BASE_URL}/user/sign-in/login")
-        login_input = self.searcher.find_element_by_id("loginform-identity")
+        login_input = self.searcher.find_element(value="loginform-identity")
         login_input.send_keys(self.login)
-        password_input = self.searcher.find_element_by_id("loginform-password")
+        password_input = self.searcher.find_element(value="loginform-password")
         password_input.send_keys(self.password)
         password_input.send_keys(Keys.RETURN)
 
         self.downloader.get(f"{BASE_URL}/user/sign-in/login")
-        login_input = self.downloader.find_element_by_id("loginform-identity")
+        login_input = self.downloader.find_element(value="loginform-identity")
         login_input.send_keys(self.login)
-        password_input = self.downloader.find_element_by_id("loginform-password")
+        password_input = self.downloader.find_element(value="loginform-password")
         password_input.send_keys(self.password)
         password_input.send_keys(Keys.RETURN)
         # auth validation
         try:
-            self.wait_searcher.until(lambda driver: driver.find_element_by_id("applicationsearch-fio"))
-            self.wait_downloader.until(lambda driver: driver.find_element_by_id("applicationsearch-fio"))
+            self.wait_searcher.until(lambda driver: driver.find_element(value="applicationsearch-fio"))
+            self.wait_downloader.until(lambda driver: driver.find_element(value="applicationsearch-fio"))
         except TimeoutException:
             raise ValueError("Неверный логин или пароль")
         self.is_auth = True
@@ -81,15 +82,15 @@ class FromCiteToArchive:
         self.searcher.get(f"https://priem.pstu.ru/sandbox/all?ApplicationSearch[statusBlock]=&ApplicationSearch[fio]={student_fio}&ApplicationSearch[usermail]=&ApplicationSearch[guid]=&ApplicationSearch[campaign_code]=&ApplicationSearch[citizenship]=&ApplicationSearch[hasIndividualAchievement]=&ApplicationSearch[targetReception]=&ApplicationSearch[preferences]=&ApplicationSearch[specialityName]=&ApplicationSearch[educationForm]=&ApplicationSearch[status]=&ApplicationSearch[sent_at]=&ApplicationSearch[to_sent_at]=&ApplicationSearch[created_at]=&ApplicationSearch[to_created_at]=&ApplicationSearch[last_management_at]=&ApplicationSearch[to_last_management_at]=&ApplicationSearch[lastManagerName]=&ApplicationSearch[historyChanges]=")
         is_empty = False
         try:
-            WebDriverWait(self.searcher, 1).until(lambda driver: driver.find_element_by_class_name("empty"))
+            WebDriverWait(self.searcher, 1).until(lambda driver: driver.find_element(By.CLASS_NAME, "empty"))
             is_empty = True
         except TimeoutException:
-            table_body = self.searcher.find_element_by_tag_name("tbody")
-            table_trs = table_body.find_elements_by_tag_name("tr")
+            table_body = self.searcher.find_element(By.TAG_NAME, "tbody")
+            table_trs = table_body.find_elements(By.TAG_NAME, "tr")
             student_ids = list(map(lambda t: t.get_attribute("data-key"), table_trs))
             for student_id in student_ids:
                 self.downloader.get(f"{BASE_URL}/sandbox/view?id={student_id}")
-                self.downloader.find_element_by_xpath("//a[@class='btn btn-info']").click()
+                self.downloader.find_element(By.XPATH, "//a[@class='btn btn-info']").click()
         if is_empty:
             print(f"{student_fio} не найден!")
         else:
