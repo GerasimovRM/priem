@@ -14,6 +14,18 @@ BASE_URL = "https://priem.pstu.ru"
 
 
 class FromCiteToArchive:
+    header_structure = ["id_on_page",
+                        "is_locked",
+                        "check_button",
+                        "fio", "email",
+                        "company",
+                        "country",
+                        "is_id_exist",
+                        "target_priem",
+                        "special_priem",
+                        "directions",
+                        ...]
+
     def __init__(self,
                  config_path,
                  searcher_profile: Optional[FirefoxProfile] = None,
