@@ -12,6 +12,5 @@ build
 *.zip
 *.jpg
 *.jpeg
-*.png
 students.txt
 *.ini
