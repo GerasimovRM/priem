@@ -10,6 +10,7 @@ from selenium.webdriver.common.keys import Keys
 
 from notification.server.config import BASE_TIME_WAIT,\
     LOGIN, PASSWORD, PARSER_URL, SERVER_ADDRESS, DEBUG
+from notification.server.core.common import debug_print
 from notification.server.models.student_data import StudentNotificationData, StudentNotification
 
 
@@ -79,7 +80,7 @@ class ParserNotificator:
                     time_created = tds[14].text
                     last_moderator = tds[16].text
                     if DEBUG:
-                        print("=====", fio, student_link, directions, status, time_send, time_created, last_moderator, "=====", sep='\n')
+                        debug_print("=====", fio, student_link, directions, status, time_send, time_created, last_moderator, "=====", sep='\n')
                     old_student_data = next(filter(lambda x: x.fio == fio and x.student_url == student_link, self.notifications.students), None)
                     is_moderated = False
                     if old_student_data:
@@ -94,6 +95,6 @@ class ParserNotificator:
                                                                  is_moderated=is_moderated))
 
             page_count += 1
-        print("PageCount:", page_count)
+        debug_print("PageCount:", page_count)
         self.notifications = StudentNotificationData(students=new_notifications)
 
