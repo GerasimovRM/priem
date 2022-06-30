@@ -8,11 +8,17 @@ from configparser import ConfigParser
 import PyQt5
 from PyQt5.QtCore import QUrl, QTimer, QCoreApplication, Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidgetItem, QSizePolicy
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidgetItem as _QTableWidgetItem, QSizePolicy
 from PyQt5 import QtCore, QtWebSockets, QtGui
 from ui_main_window import Ui_MainWindow
 import webbrowser
 import requests
+
+
+class QTableWidgetItem(_QTableWidgetItem):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setTextAlignment(Qt.AlignCenter)
 
 
 class QtTestApp(QMainWindow, Ui_MainWindow):
@@ -32,7 +38,8 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
         self.client = None
         self.client = QtWebSockets.QWebSocket("", QtWebSockets.QWebSocketProtocol.Version13, None)
         self.client.error.connect(self.error)
-        self.label_icon_connection.setPixmap(self.icons["red_button"].pixmap(15))
+        self.label_icon_connection.setPixmap(self.icons["red_button"].pixmap(20))
+        self.label_status_connection.setText("Соединение разорвано")
         self.websocket_connection()
         self.tableWidget.itemDoubleClicked.connect(self.open_link)
         self.students_data = None
@@ -65,6 +72,7 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
             self.tableWidget.setItem(item_row, 6, QTableWidgetItem(os.environ["COMPUTERNAME"]))
             table_widget_item_cancel = QTableWidgetItem()
             table_widget_item_cancel.setIcon(self.icons["cancel_button"])
+            table_widget_item_cancel.setTextAlignment(Qt.AlignCenter)
             self.tableWidget.setItem(item_row, 7, table_widget_item_cancel)
             webbrowser.open(self.students_data[item_row]["student_url"])
             self.set_color_to_row(item_row, PyQt5.QtCore.Qt.gray)
@@ -75,6 +83,7 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
             self.students_data[item_row]["is_moderated"] = False
             self.tableWidget.setItem(item_row, 6, QTableWidgetItem(os.environ["COMPUTERNAME"]))
             table_widget_item_cancel = QTableWidgetItem()
+            table_widget_item_cancel.setTextAlignment(Qt.AlignCenter)
             self.tableWidget.setItem(item_row, 7, table_widget_item_cancel)
             self.set_color_to_row(item_row, None)
 
@@ -87,6 +96,7 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
 
     def receive_message(self, message):
         self.label_icon_connection.setPixmap(self.icons["green_button"].pixmap(20))
+        self.label_status_connection.setText("Подключено")
         message = json.loads(message)
         print(f"client: receive message: {message}")
         # self.tableWidget.clear()
@@ -116,7 +126,8 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
         self.client.sendTextMessage("ok")
 
     def error(self, error_code):
-        self.label_icon_connection.setPixmap(self.icons["red_button"].pixmap(15))
+        self.label_icon_connection.setPixmap(self.icons["red_button"].pixmap(20))
+        self.label_status_connection.setText("Соединение разорвано")
         print("error code: {}".format(error_code))
         print(self.client.errorString())
         self.websocket_connection()
