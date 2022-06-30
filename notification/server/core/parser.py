@@ -31,7 +31,7 @@ class ParserNotificator:
         self.notifications: StudentNotificationData = StudentNotificationData(students=[])
         self.auth()
         self.main_page_url = self.searcher.current_url
-        self.parse_new_students()
+        # self.parse_new_students()
 
     def auth(self) -> bool:
         # TODO: log time answer => except value error
@@ -94,5 +94,6 @@ class ParserNotificator:
                                                                  is_moderated=is_moderated))
 
             page_count += 1
+        print("PageCount:", page_count)
         self.notifications = StudentNotificationData(students=new_notifications)
 
