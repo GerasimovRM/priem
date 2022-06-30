@@ -5,6 +5,7 @@ config.read("config.ini")
 
 LOGIN = config.get("MAIN", "LOGIN")
 PASSWORD = config.get("MAIN", "PASSWORD")
-SERVER_ADDRESS = config.get("MAIN", "MAIN_ADDRESS")
-PARSER_URL = config.get("MAIN", "BASE_URL")
+SERVER_ADDRESS = config.get("MAIN", "SERVER_ADDRESS")
+PARSER_URL = config.get("MAIN", "PARSER_URL")
 BASE_TIME_WAIT = config.get("MAIN", "BASE_TIME_WAIT")
+DEBUG = True if config.get("MAIN", "DEBUG") == "true" else False
