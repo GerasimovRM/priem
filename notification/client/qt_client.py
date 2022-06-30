@@ -72,7 +72,7 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
             self.tableWidget.setItem(item_row, 6, QTableWidgetItem(os.environ["COMPUTERNAME"]))
             table_widget_item_cancel = QTableWidgetItem()
             table_widget_item_cancel.setIcon(self.icons["cancel_button"])
-            table_widget_item_cancel.setTextAlignment(Qt.AlignCenter)
+            table_widget_item_cancel.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter | Qt.AlignHCenter)
             self.tableWidget.setItem(item_row, 7, table_widget_item_cancel)
             webbrowser.open(self.students_data[item_row]["student_url"])
             self.set_color_to_row(item_row, PyQt5.QtCore.Qt.gray)
@@ -81,9 +81,9 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
                                      self.students_data[item_row]["student_url"],
                                      False)
             self.students_data[item_row]["is_moderated"] = False
-            self.tableWidget.setItem(item_row, 6, QTableWidgetItem(os.environ["COMPUTERNAME"]))
+            self.tableWidget.setItem(item_row, 6, QTableWidgetItem("Свободен"))
             table_widget_item_cancel = QTableWidgetItem()
-            table_widget_item_cancel.setTextAlignment(Qt.AlignCenter)
+            table_widget_item_cancel.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter | Qt.AlignHCenter)
             self.tableWidget.setItem(item_row, 7, table_widget_item_cancel)
             self.set_color_to_row(item_row, None)
 
@@ -95,8 +95,6 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
         self.client.sendTextMessage("ok")
 
     def receive_message(self, message):
-        self.label_icon_connection.setPixmap(self.icons["green_button"].pixmap(20))
-        self.label_status_connection.setText("Подключено")
         message = json.loads(message)
         print(f"client: receive message: {message}")
         # self.tableWidget.clear()
@@ -108,6 +106,7 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
             self.tableWidget.setItem(row_position, 0, QTableWidgetItem(student["fio"]))
             table_widget_item_link = QTableWidgetItem()
             table_widget_item_link.setIcon(self.icons["link"])
+            table_widget_item_link.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter | Qt.AlignHCenter)
             self.tableWidget.setItem(row_position, 1, table_widget_item_link)
             self.tableWidget.setItem(row_position, 2, QTableWidgetItem("\n".join(student["directions"])))
             self.tableWidget.setItem(row_position, 3, QTableWidgetItem(student["status"]))
@@ -123,11 +122,14 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
             if student["is_moderated"]:
                 self.set_color_to_row(row_position, PyQt5.QtCore.Qt.gray)
         self.config_size_table()
+        self.label_icon_connection.setPixmap(self.icons["green_button"].pixmap(20))
+        self.label_status_connection.setText("Подключено")
         self.client.sendTextMessage("ok")
 
     def error(self, error_code):
         self.label_icon_connection.setPixmap(self.icons["red_button"].pixmap(20))
         self.label_status_connection.setText("Соединение разорвано")
+        self.tableWidget.setRowCount(0)
         print("error code: {}".format(error_code))
         print(self.client.errorString())
         self.websocket_connection()
