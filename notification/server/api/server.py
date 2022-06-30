@@ -11,13 +11,15 @@ from starlette.websockets import WebSocket, WebSocketDisconnect
 from notification.server.core.parser import ParserNotificator
 from notification.server.models.student_data import StudentNotificationData
 
+from fastapi_utils.tasks import repeat_every
+
 app = FastAPI(docs_url="/")
 parser = ParserNotificator()
 
 
-class TestData(BaseModel):
-    fio: str
-    test: str
+@repeat_every(seconds=60 * 5)
+async def get_data_from_site():
+    parser.parse_new_students()
 
 
 @app.get("/get_data", response_model=StudentNotificationData)
@@ -41,7 +43,6 @@ async def put_student(fio: str,
 
 @app.websocket("/")
 async def websocket_endpoint(websocket: WebSocket):
-    # test_data = TestData(fio="123", test="testr")
     await websocket.accept()
     try:
         while True:

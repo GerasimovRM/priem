@@ -2,6 +2,8 @@ import json
 import os
 import sys
 import pickle
+from configparser import ConfigParser
+
 
 import PyQt5
 from PyQt5.QtCore import QUrl, QTimer, QCoreApplication, Qt
@@ -18,6 +20,11 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
         super(QtTestApp, self).__init__()
         self.setupUi(self)
 
+        config = ConfigParser()
+        config.read("config.ini")
+        self.server_address = config.get("QT", "SERVER_ADDRESS")
+        self.server_port = config.get("QT", "SERVER_PORT")
+
         self.client = None
         self.websocket_connection()
         self.tableWidget.itemDoubleClicked.connect(self.open_link)
@@ -33,11 +40,11 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
             self.tableWidget.horizontalHeader().length() + self.tableWidget.verticalHeader().width(),
             self.tableWidget.verticalHeader().length() + self.tableWidget.horizontalHeader().height())
 
-    @staticmethod
-    def put_student_request(fio: str, link: str):
-        requests.put("http://127.0.0.1:5000/student", params={"fio": fio,
-                                                              "student_url": link,
-                                                              "computer_name": os.environ["COMPUTERNAME"]})
+    def put_student_request(self, fio: str, link: str):
+        requests.put(f"http://{self.server_address}:{self.server_port}/student", params={"fio": fio,
+                                                                                         "student_url": link,
+                                                                                         "computer_name": os.environ[
+                                                                                             "COMPUTERNAME"]})
 
     def open_link(self, item: QTableWidgetItem):
         item_column = item.column()
@@ -53,7 +60,7 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
         self.client = QtWebSockets.QWebSocket("", QtWebSockets.QWebSocketProtocol.Version13, None)
         self.client.error.connect(self.error)
 
-        self.client.open(QUrl("ws://127.0.0.1:5000"))
+        self.client.open(QUrl(f"ws://{self.server_address}:{self.server_port}"))
         self.client.textMessageReceived.connect(self.receive_message)
 
     def send_message(self):
