@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 import sys
@@ -96,7 +97,7 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
 
     def receive_message(self, message):
         message = json.loads(message)
-        print(f"client: receive message: {message}")
+        print(f"client: receive message {datetime.datetime.now()}: {message}")
         # self.tableWidget.clear()
         self.tableWidget.setRowCount(0)
         self.students_data = message["students"]

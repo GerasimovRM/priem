@@ -7,7 +7,7 @@ import asyncio
 from starlette.websockets import WebSocket, WebSocketDisconnect
 from websockets.exceptions import ConnectionClosedError, ConnectionClosedOK
 
-from notification.server.config import BASE_TIME_WAIT, SERVER_PARSER_WAIT
+from notification.server.config import WEBSOCKET_TIME_WAIT, SERVER_PARSER_WAIT
 from notification.server.core.parser import ParserNotificator
 from notification.server.models.student_data import StudentNotificationData
 from notification.server.core.common import debug_print
@@ -61,6 +61,6 @@ async def websocket_endpoint(websocket: WebSocket):
             if parser and is_loaded:
                 await websocket.send_json(parser.notifications.dict())
                 data = await websocket.receive_text()
-            await asyncio.sleep(BASE_TIME_WAIT)
+            await asyncio.sleep(WEBSOCKET_TIME_WAIT)
     except (WebSocketDisconnect, ConnectionClosedError, ConnectionClosedOK):
         pass

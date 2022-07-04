@@ -8,7 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
 
-from notification.server.config import BASE_TIME_WAIT,\
+from notification.server.config import SELENIUM_TIME_WAIT,\
     LOGIN, PASSWORD, PARSER_URL, SERVER_ADDRESS, DEBUG
 from notification.server.core.common import debug_print
 from notification.server.models.student_data import StudentNotificationData, StudentNotification
@@ -22,7 +22,7 @@ class ParserNotificator:
         if basic_time_wait:
             self.basic_time_wait = basic_time_wait
         else:
-            self.basic_time_wait = BASE_TIME_WAIT
+            self.basic_time_wait = SELENIUM_TIME_WAIT
         options = Options()
         options.add_argument('--headless')
         self.searcher = Firefox(options=options)
