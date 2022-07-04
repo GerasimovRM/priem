@@ -12,6 +12,7 @@ from notification.server.config import BASE_TIME_WAIT,\
     LOGIN, PASSWORD, PARSER_URL, SERVER_ADDRESS, DEBUG
 from notification.server.core.common import debug_print
 from notification.server.models.student_data import StudentNotificationData, StudentNotification
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class ParserNotificator:
@@ -23,15 +24,14 @@ class ParserNotificator:
         else:
             self.basic_time_wait = BASE_TIME_WAIT
         options = Options()
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.searcher = Firefox(options=options)
         self.wait_searcher = WebDriverWait(self.searcher, self.basic_time_wait)
         self.login = LOGIN
         self.password = PASSWORD
         self.is_auth = False
         self.notifications: StudentNotificationData = StudentNotificationData(students=[])
-        self.auth()
-        self.main_page_url = self.searcher.current_url
+        self.main_page_url = None
         # self.parse_new_students()
 
     def auth(self) -> bool:
@@ -44,14 +44,18 @@ class ParserNotificator:
         password_input = self.searcher.find_element(value="loginform-password")
         password_input.send_keys(self.password)
         password_input.send_keys(Keys.RETURN)
-
         try:
-            self.wait_searcher.until(lambda driver: driver.find_element(value="applicationsearch-fio"))
+            # self.wait_searcher.until(lambda driver: driver.find_element(By.ID, value="applicationsearch-fio"))
+            self.wait_searcher.until(EC.presence_of_element_located((By.ID, "applicationsearch-fio")))
+
         except TimeoutException:
             raise ValueError("Неверный логин или пароль")
         self.is_auth = True
+        self.main_page_url = self.searcher.current_url
 
     def parse_new_students(self):
+        if not self.is_auth:
+            self.auth()
         new_notifications = []
         page_count = 1
         while True:
