@@ -24,7 +24,7 @@ class ParserNotificator:
         else:
             self.basic_time_wait = BASE_TIME_WAIT
         options = Options()
-        # options.add_argument('--headless')
+        options.add_argument('--headless')
         self.searcher = Firefox(options=options)
         self.wait_searcher = WebDriverWait(self.searcher, self.basic_time_wait)
         self.login = LOGIN
