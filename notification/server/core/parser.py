@@ -19,6 +19,8 @@ class ParserNotificator:
     def __init__(self, basic_time_wait: Optional[int] = None):
         with open("directions.txt", encoding="utf-8") as input_file:
             self.directions = set(input_file.read().split("\n"))
+        with open("ndirections.txt", encoding="utf-8") as input_file:
+            self.ndirections = set(input_file.read().split("\n"))
         if basic_time_wait:
             self.basic_time_wait = basic_time_wait
         else:
@@ -71,8 +73,16 @@ class ParserNotificator:
                     break
                 for tr in table_trs:
                     tds = tr.find_elements(By.TAG_NAME, "td")
-                    directions = set(map(str.strip, tds[10].text.split(","))) & self.directions
+                    dirr = set(map(str.strip, tds[10].text.split(",")))
+                    directions =  dirr & self.directions
+                    notdirections = dirr & self.ndirections
                     if not directions:
+                        continue
+                    if notdirections:
+                        continue
+                    if tds[6].text != "Россия":
+                        continue
+                    if tds[12].text == "Ошибка системы при одобрении":
                         continue
 
                     student_link_td = tds[2]
