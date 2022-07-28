@@ -14,3 +14,5 @@ build
 *.jpeg
 students.txt
 *.ini
+/notification/vk_bot/.env
+/abiturients/.env
