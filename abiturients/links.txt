@@ -1,0 +1,5 @@
+http://127.0.0.1:5000/get_default?group_name=mm
+http://127.0.0.1:5000/get_agreement_with_original_docs?group_name=mm
+http://127.0.0.1:5000/get_agreement_without_original_docs?group_name=ist
+http://127.0.0.1:5000/get_original_docs_without_agreement?group_name=ist
+http://127.0.0.1:5000/get_exclude_peoples?group_name=mm
