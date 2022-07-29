@@ -50,12 +50,12 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
         self.tableWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.tableWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.tableWidget.resizeColumnsToContents()
-        self.tableWidget.setFixedSize(
-            self.tableWidget.horizontalHeader().length() + self.tableWidget.verticalHeader().width(),
-            self.tableWidget.verticalHeader().length() + self.tableWidget.horizontalHeader().height())
+        # self.tableWidget.setFixedSize(
+        #     self.tableWidget.horizontalHeader().length() + self.tableWidget.verticalHeader().width(),
+        #     self.tableWidget.verticalHeader().length() + self.tableWidget.horizontalHeader().height())
 
     def put_student_request(self, fio: str, link: str, is_moderated: bool):
-        requests.put(f"http://{self.server_address}:{self.server_port}/student", params={"fio": fio,
+        requests.put("http://{}:{}/student".format(self.server_address, self.server_port), params={"fio": fio,
                                                                                          "student_url": link,
                                                                                          "computer_name": os.environ[
                                                                                              "COMPUTERNAME"],
@@ -89,7 +89,7 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
             self.set_color_to_row(item_row, None)
 
     def websocket_connection(self):
-        self.client.open(QUrl(f"ws://{self.server_address}:{self.server_port}"))
+        self.client.open(QUrl("ws://{}:{}".format(self.server_address, self.server_port)))
         self.client.textMessageReceived.connect(self.receive_message)
 
     def send_message(self):
@@ -97,7 +97,7 @@ class QtTestApp(QMainWindow, Ui_MainWindow):
 
     def receive_message(self, message):
         message = json.loads(message)
-        print(f"client: receive message {datetime.datetime.now()}: {message}")
+        print("client: receive message {}: {}".format(datetime.datetime.now(), message))
         # self.tableWidget.clear()
         self.tableWidget.setRowCount(0)
         self.students_data = message["students"]

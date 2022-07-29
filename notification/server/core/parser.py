@@ -34,6 +34,7 @@ class ParserNotificator:
         self.is_auth = False
         self.notifications: StudentNotificationData = StudentNotificationData(students=[])
         self.main_page_url = None
+        self.otkon_page_url = "https://priem.pstu.ru/sandbox/declined"
         # self.parse_new_students()
 
     def auth(self) -> bool:
@@ -74,15 +75,13 @@ class ParserNotificator:
                 for tr in table_trs:
                     tds = tr.find_elements(By.TAG_NAME, "td")
                     dirr = set(map(str.strip, tds[10].text.split(",")))
-                    directions =  dirr & self.directions
+                    directions = dirr & self.directions
                     notdirections = dirr & self.ndirections
                     if not directions:
                         continue
                     if notdirections:
                         continue
                     if tds[6].text != "Россия":
-                        continue
-                    if tds[12].text == "Ошибка системы при одобрении":
                         continue
 
                     student_link_td = tds[2]
@@ -96,6 +95,58 @@ class ParserNotificator:
                     if DEBUG:
                         debug_print("=====", fio, student_link, directions, status, time_send, time_created, last_moderator, "=====", sep='\n')
                     old_student_data = next(filter(lambda x: x.fio == fio and x.student_url == student_link, self.notifications.students), None)
+                    is_moderated = False
+                    if old_student_data:
+                        is_moderated = old_student_data.is_moderated
+                    new_notifications.append(StudentNotification(fio=fio,
+                                                                 student_url=student_link,
+                                                                 directions=directions,
+                                                                 status=status,
+                                                                 time_send=time_send,
+                                                                 time_created=time_created,
+                                                                 last_moderator=last_moderator,
+                                                                 is_moderated=is_moderated))
+
+            page_count += 1
+        debug_print("PageCount:", page_count)
+        page_count = 1
+        while True:
+            self.searcher.get(f"{self.otkon_page_url}?page={page_count}")
+            try:
+                WebDriverWait(self.searcher, 1).until(lambda driver: driver.find_element(By.CLASS_NAME, "empty"))
+            except TimeoutException:
+                table_body = self.searcher.find_element(By.TAG_NAME, "tbody")
+                table_trs = table_body.find_elements(By.TAG_NAME, "tr")
+                first_td = table_trs[0].find_element(By.TAG_NAME, "td")
+                first_id_on_page = int(first_td.text)
+                if (page_count - 1) * 20 + 1 != first_id_on_page:
+                    break
+                for tr in table_trs:
+                    tds = tr.find_elements(By.TAG_NAME, "td")
+                    dirr = set(map(str.strip, tds[10].text.split(",")))
+                    directions = dirr & self.directions
+                    notdirections = dirr & self.ndirections
+                    if not directions:
+                        continue
+                    if notdirections:
+                        continue
+                    if tds[6].text != "Россия":
+                        continue
+
+                    student_link_td = tds[2]
+                    student_link = student_link_td.find_element(By.CLASS_NAME, "btn").get_attribute(
+                        "href")
+                    fio = tds[3].text
+                    status = tds[12].text
+                    time_send = tds[13].text
+                    time_created = tds[14].text
+                    last_moderator = tds[16].text
+                    if DEBUG:
+                        debug_print("=====", fio, student_link, directions, status, time_send, time_created,
+                                    last_moderator, "=====", sep='\n')
+                    old_student_data = next(
+                        filter(lambda x: x.fio == fio and x.student_url == student_link, self.notifications.students),
+                        None)
                     is_moderated = False
                     if old_student_data:
                         is_moderated = old_student_data.is_moderated
