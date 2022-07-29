@@ -14,4 +14,5 @@ load_dotenv()
 DEBUG = True if os.getenv("DEBUG") in ("True", "true", "1") else False
 
 MONGODB_URL = os.getenv(debug_prestring("MONGODB_URL"))
+print(MONGODB_URL)
 PARSE_EVERY = int(os.getenv("PARSE_EVERY"))
