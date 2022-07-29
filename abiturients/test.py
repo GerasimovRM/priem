@@ -32,3 +32,5 @@ data = [
 
 d = list(map(lambda abit_data: dict(abit_data[1] | {"Рейтинг": abit_data[0]}), enumerate(data, 1)))
 print(*d, sep="\n")
+
+
