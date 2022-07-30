@@ -11,7 +11,7 @@ from common import group_names
 app = FastAPI(docs_url="/")
 
 
-exclude_data = {"ist": 65, "fop": 25, "pm": 40, "ivk": 25, "mie": 25, "mm": 38}
+exclude_data = {"ist": 63, "fop": 22, "pm": 38, "ivk": 23, "mie": 22, "mm": 37}
 delete_keys = ["Подтверждающий документ (целевого направления)", "Преимущ.право"]
 students_codes = {}
 
@@ -82,8 +82,8 @@ async def get_exclude_peoples():
     client = DbClient()
     abiturients = client["abiturients"]
     query = {"Вид документа об образовании": "Оригинал", "Согласие на зачисление": "✓"}
-    return {group_name: update_rating(add_students_names(abiturients[group_name].find(query)[exclude_data[group_name]:],
-                                      enumerate_with=exclude_data[group_name] + 1)) for group_name in group_names}
+    return {group_name: update_rating(add_students_names(abiturients[group_name].find(query)[exclude_data[group_name]:]),
+                                      enumerate_with=exclude_data[group_name] + 1) for group_name in group_names}
 
 if __name__ == "__main__":
 
