@@ -18,3 +18,5 @@ students.txt
 /abiturients/.env
 students
 config.ini
+zip
+*.xlsx
