@@ -16,3 +16,5 @@ students.txt
 *.ini
 /notification/vk_bot/.env
 /abiturients/.env
+students
+config.ini
