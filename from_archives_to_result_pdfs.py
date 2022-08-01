@@ -114,8 +114,8 @@ for student_name in next(os.walk("data"))[1]:
 
     # find jpgs and pdfs for join and join to RESULT_<student_name>.pdf
     result_files = []
-    result_files.extend(glob.glob(f"data\\{student_name}\\jpgs.pdf"))
-    result_files.extend(glob.glob(f"data\\{student_name}\\{student_name}_sub.pdf"))
+    result_files.extend(glob.glob(f"{DATA_DIR}\\{student_name}\\jpgs.pdf"))
+    result_files.extend(glob.glob(f"{DATA_DIR}\\{student_name}\\{student_name}_sub.pdf"))
     join_pdf_files(result_files, root, f"RESULT_{student_name}")
     # log to console bad documents
     if not_taken_files:

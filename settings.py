@@ -1,6 +1,7 @@
 import configparser
 
 config = configparser.ConfigParser()
+config.read("config.ini")
 main_section = config["MAIN"]
 
 LOGIN = main_section["LOGIN"]

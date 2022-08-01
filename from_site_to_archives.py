@@ -6,7 +6,7 @@ import time
 from selenium.webdriver import FirefoxProfile, Firefox
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 
 
@@ -94,7 +94,7 @@ class FromCiteToArchive:
         self.searcher.get(f"https://priem.pstu.ru/sandbox/all?ApplicationSearch[statusBlock]=&ApplicationSearch[fio]={student_fio}&ApplicationSearch[usermail]=&ApplicationSearch[guid]=&ApplicationSearch[campaign_code]=&ApplicationSearch[citizenship]=&ApplicationSearch[hasIndividualAchievement]=&ApplicationSearch[targetReception]=&ApplicationSearch[preferences]=&ApplicationSearch[specialityName]=&ApplicationSearch[educationForm]=&ApplicationSearch[status]=&ApplicationSearch[sent_at]=&ApplicationSearch[to_sent_at]=&ApplicationSearch[created_at]=&ApplicationSearch[to_created_at]=&ApplicationSearch[last_management_at]=&ApplicationSearch[to_last_management_at]=&ApplicationSearch[lastManagerName]=&ApplicationSearch[historyChanges]=")
         is_empty = False
         try:
-            WebDriverWait(self.searcher, 1).until(lambda driver: driver.find_element(By.CLASS_NAME, "empty"))
+            WebDriverWait(self.searcher, 3).until(lambda driver: driver.find_element(By.CLASS_NAME, "empty"))
             is_empty = True
         except TimeoutException:
             table_body = self.searcher.find_element(By.TAG_NAME, "tbody")
@@ -102,7 +102,10 @@ class FromCiteToArchive:
             student_ids = list(map(lambda t: t.get_attribute("data-key"), table_trs))
             for student_id in student_ids:
                 self.downloader.get(f"{BASE_URL}/sandbox/view?id={student_id}")
-                self.downloader.find_element(By.XPATH, "//a[@class='btn btn-info']").click()
+                try:
+                    self.downloader.find_element(By.XPATH, "//a[@class='btn btn-info']").click()
+                except NoSuchElementException:
+                    is_empty = True
         if is_empty:
             print(f"{student_fio} не найден!")
         else:

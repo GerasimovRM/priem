@@ -22,7 +22,7 @@ def update_rating(abiturients, enumerate_with=1):
 
 
 def add_students_names(abiturients):
-    return list(map(lambda abit_data: dict(zip(["ФИО", "_____Номер_____", "Почта"], students_codes[abit_data["_id"]])) | abit_data, abiturients))
+    return list(map(lambda abit_data: dict(zip(["ФИО", "_____Номер_____", "Почта"], students_codes[abit_data["_id"]] if abit_data["_id"] in students_codes else ["-", "-", "-"])) | abit_data, abiturients))
 
 
 @app.on_event("startup")
