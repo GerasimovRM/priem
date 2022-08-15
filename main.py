@@ -1,3 +1,4 @@
+import time
 from os.path import exists
 from pprint import pprint
 
@@ -28,5 +29,5 @@ with open("students.txt", encoding="utf-8") as students_file:
         parser.find_person_and_load_data(student_fio)
 parser.close_all_webdrivers()
 
-#
+time.sleep(5)
 import from_archives_to_result_pdfs
