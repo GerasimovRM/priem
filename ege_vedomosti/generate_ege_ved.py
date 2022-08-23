@@ -16,11 +16,14 @@ from openpyxl.worksheet.dimensions import DimensionHolder, ColumnDimension
 
 with open("generate_data.json", encoding="utf-8") as json_data:
     generate_data = json.load(json_data)
-
 zz = generate_data["page_row_count"]
+
+with open("input_people.txt", "r", encoding="utf-8") as input_people:
+    needed_people = input_people.read().split("\n")
 
 abiturients_data = {}
 data_xlsx = load_workbook("data.xlsx")
+print("loaded!")
 sheet = data_xlsx.worksheets[0]
 next_row = None
 current_row = 1
@@ -31,7 +34,10 @@ for i, row in enumerate(sheet.rows, current_row):
         for j, cell in enumerate(row, 1):
             if isinstance(cell, Cell) and cell.value is not None:
                 if cell.value == "Справка для личного дела абитуриента сформирована из ФИС ГИА и приема для образовательной организации:":
-                    abiturients_data[current_abiturient]["subjects"].sort()
+                    try:  # пустая таблица
+                        abiturients_data[current_abiturient]["subjects"].sort()
+                    except KeyError:
+                        break
                     abiturients_data[current_abiturient]["subjects"] = list(k for k, _ in itertools.groupby(abiturients_data[current_abiturient]["subjects"]))
                     subjects = False
                     break
@@ -46,6 +52,8 @@ for i, row in enumerate(sheet.rows, current_row):
                 # print(cell, cell.value)
                 if cell.value == "о результатах единого государственного экзамена":
                     current_abiturient = sheet.cell(i + 2, j).value
+                    current_abiturient = " ".join(map(str.capitalize, current_abiturient.split()))
+                    print(current_abiturient)
                     if current_abiturient not in abiturients_data:
                         abiturients_data[current_abiturient] = {}
                 elif "документ, удостоверяющий личность:" in cell.value:
@@ -54,8 +62,25 @@ for i, row in enumerate(sheet.rows, current_row):
                 elif cell.value == "Наименование предмета":
                     subjects = True
                     break
+# print(*sorted(abiturients_data.items(), key=lambda x: x[0]), sep='\n')
+chelicks_lower = list(map(str.lower, abiturients_data.keys()))
+print(chelicks_lower)
+new_abiturients_data = {}
+for i, chel in enumerate(needed_people, 1):
+    try:
+        if chel.lower() in chelicks_lower:
+            new_abiturients_data[chel] = abiturients_data[chel]
+        else:
+            usually_name = " ".join(map(str.capitalize, chel.split()))
+            big_dick_name = " ".join(map(str.upper, chel.split()))
+            if usually_name in needed_people:
+                new_abiturients_data[usually_name] = abiturients_data[usually_name]
+            elif big_dick_name in needed_people:
+                new_abiturients_data[big_dick_name] = abiturients_data[big_dick_name]
+    except KeyError:
+        pass
+abiturients_data = new_abiturients_data
 print(*sorted(abiturients_data.items(), key=lambda x: x[0]), sep='\n')
-
 template = load_workbook("template.xlsx")
 ws_template = template.worksheets[0]
 
@@ -140,6 +165,7 @@ for abit_i, current_abiturient in enumerate(list(abiturients_data.keys())):
                         ws_res.cell(i + ii + zz * abit_i, 3, subject[1])
                         ws_res.cell(i + ii + zz * abit_i, 4, subject[2])
                         ws_res.cell(i + ii + zz * abit_i, 5, subject[3])
+                        print(subject)
                         if len(subject) > 4:
                             ws_res.cell(i + ii + zz * abit_i, 7, subject[4])
                         for k in range(1, 11):
